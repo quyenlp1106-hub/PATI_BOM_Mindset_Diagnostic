@@ -1,0 +1,2 @@
+# PATI_BOM_Mindset_Diagnostic
+PATI_BOM_Mindset_Diagnostic

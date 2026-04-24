@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PATI BOM Mindset Diagnostic Tool</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #0d1117;
+    color: #f0f6fc;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.header h1 {
+    font-size: 2em;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.header p {
+    color: #8b949e;
+    font-size: 1.1em;
+}
+
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    padding: 30px;
+}
+
+.card-title {
+    font-size: 1.3em;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #f0f6fc;
+}
+
+/* Member Selection */
+.member-select {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.member-btn {
+    background: #21262d;
+    border: 2px solid #30363d;
+    color: #f0f6fc;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.member-btn:hover {
+    background: #30363d;
+    border-color: #58a6ff;
+}
+
+.member-btn.active {
+    background: linear-gradient(135deg, #58a6ff, #1f6feb);
+    border-color: #58a6ff;
+}
+
+/* Inputs Section */
+.inputs-section {
+    margin-bottom: 30px;
+}
+
+.section-header {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #58a6ff;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #30363d;
+}
+
+.input-item {
+    margin-bottom: 20px;
+}
+
+.input-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.input-label-text {
+    font-size: 0.95em;
+    font-weight: 500;
+}
+
+.input-label-value {
+    background: #21262d;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-weight: 700;
+    min-width: 40px;
+    text-align: center;
+}
+
+.value-1 { color: #f85149; }
+.value-2 { color: #d29922; }
+.value-3 { color: #3fb950; }
+
+.slider-container {
+    position: relative;
+    padding: 10px 0;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: linear-gradient(to right, 
+        #f85149 0%, #f85149 33%, 
+        #d29922 33%, #d29922 66%, 
+        #3fb950 66%, #3fb950 100%);
+    outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #f0f6fc;
+    border: 3px solid #58a6ff;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
+}
+
+.slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #f0f6fc;
+    border: 3px solid #58a6ff;
+    cursor: pointer;
+}
+
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75em;
+    color: #8b949e;
+    margin-top: 5px;
+}
+
+/* Chart Section */
+.chart-container {
+    position: relative;
+    height: 500px;
+    margin-bottom: 30px;
+}
+
+.score-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.score-box {
+    background: #21262d;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.score-box-label {
+    font-size: 0.85em;
+    color: #8b949e;
+    margin-bottom: 5px;
+}
+
+.score-box-value {
+    font-size: 2em;
+    font-weight: 800;
+}
+
+/* History Section */
+.history-section {
+    margin-top: 30px;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.history-item {
+    background: #21262d;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.history-item:hover {
+    background: #30363d;
+    border-color: #58a6ff;
+}
+
+.history-item.active {
+    background: #1f6feb;
+    border-color: #58a6ff;
+}
+
+.history-date {
+    font-size: 0.9em;
+    color: #8b949e;
+}
+
+.history-score {
+    font-size: 1.2em;
+    font-weight: 700;
+}
+
+.history-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9em;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #58a6ff, #1f6feb);
+    color: white;
+}
+
+.btn-secondary {
+    background: #21262d;
+    border: 1px solid #30363d;
+    color: #f0f6fc;
+}
+
+.btn-danger {
+    background: #da3633;
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-large {
+    padding: 15px 30px;
+    font-size: 1.1em;
+}
+
+/* Definition Box */
+.definition-box {
+    background: #21262d;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 4px solid #58a6ff;
+}
+
+.definition-box p {
+    color: #8b949e;
+    line-height: 1.6;
+}
+
+/* Legend */
+.legend {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9em;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+@media (max-width: 1024px) {
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Comparison Table */
+.comparison-controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.comparison-table-container {
+    overflow-x: auto;
+    margin-bottom: 30px;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+.comparison-table thead {
+    background: linear-gradient(135deg, #21262d, #30363d);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.comparison-table th {
+    padding: 15px 10px;
+    text-align: center;
+    font-weight: 700;
+    border: 1px solid #30363d;
+    color: #58a6ff;
+}
+
+.comparison-table th.sticky-col {
+    position: sticky;
+    left: 0;
+    background: linear-gradient(135deg, #21262d, #30363d);
+    z-index: 11;
+    text-align: left;
+    min-width: 200px;
+}
+
+.comparison-table th.avg-col {
+    background: linear-gradient(135deg, #1f6feb, #58a6ff);
+    color: white;
+}
+
+.comparison-table td {
+    padding: 12px 10px;
+    text-align: center;
+    border: 1px solid #30363d;
+}
+
+.comparison-table td.sticky-col {
+    position: sticky;
+    left: 0;
+    background: #161b22;
+    font-weight: 600;
+    text-align: left;
+    z-index: 9;
+}
+
+.comparison-table tbody tr:hover {
+    background: #21262d;
+}
+
+.comparison-table .category-row {
+    background: #1f6feb;
+}
+
+.comparison-table .category-row td {
+    font-weight: 700;
+    color: white;
+    padding: 10px;
+}
+
+.score-cell {
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+.score-1 {
+    color: #f85149;
+    background: rgba(248, 81, 73, 0.1);
+}
+
+.score-2 {
+    color: #d29922;
+    background: rgba(210, 153, 34, 0.1);
+}
+
+.score-3 {
+    color: #3fb950;
+    background: rgba(63, 185, 80, 0.1);
+}
+
+.score-0 {
+    color: #8b949e;
+    background: rgba(139, 148, 158, 0.1);
+}
+
+.avg-cell {
+    background: rgba(88, 166, 255, 0.1);
+    font-weight: 700;
+    font-size: 1.05em;
+}
+
+.comparison-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.summary-card {
+    background: #21262d;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid;
+}
+
+.summary-card.strongest {
+    border-color: #3fb950;
+}
+
+.summary-card.weakest {
+    border-color: #f85149;
+}
+
+.summary-card.team-avg {
+    border-color: #58a6ff;
+}
+
+.summary-card h4 {
+    font-size: 0.9em;
+    color: #8b949e;
+    margin-bottom: 8px;
+}
+
+.summary-card .value {
+    font-size: 1.8em;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.summary-card .detail {
+    font-size: 0.85em;
+    color: #8b949e;
+}
+
+.no-data-message {
+    text-align: center;
+    padding: 40px;
+    color: #8b949e;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>PATI BOM Mindset Diagnostic</h1>
+        <p>Công cụ đánh giá & theo dõi phát triển tư duy BOM</p>
+    </div>
+
+    <!-- Member Selection -->
+    <div class="card">
+        <div class="card-title">Chọn thành viên BOM</div>
+        <div class="member-select" id="memberSelect"></div>
+    </div>
+
+    <div class="main-grid">
+        <!-- LEFT: Input Section -->
+        <div class="card">
+            <div class="card-title">Đánh giá tiêu chuẩn</div>
+            
+            <div class="definition-box">
+                <p><strong>Cách đánh giá:</strong></p>
+                <p>1 = Problematic | 2 = Solver | 3 = Builder</p>
+            </div>
+
+            <div class="inputs-section">
+                <div class="section-header">4 THINKING MODELS</div>
+                <div id="thinkingInputs"></div>
+            </div>
+
+            <div class="inputs-section">
+                <div class="section-header">6 CORE DNA</div>
+                <div id="dnaInputs"></div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary btn-large" onclick="saveAssessment()">💾 Lưu đánh giá</button>
+                <button class="btn btn-secondary btn-large" onclick="resetForm()">🔄 Reset</button>
+            </div>
+        </div>
+
+        <!-- RIGHT: Chart Section -->
+        <div class="card">
+            <div class="card-title">Biểu đồ Radar Mindset</div>
+            <div class="chart-container">
+                <canvas id="radarChart"></canvas>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: rgba(88, 166, 255, 0.3); border: 2px solid #58a6ff;"></div>
+                    <span>Tiêu chuẩn Builder 10x</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: rgba(248, 81, 73, 0.3); border: 2px solid #f85149;"></div>
+                    <span>Năng lực hiện tại</span>
+                </div>
+            </div>
+
+            <div class="score-summary">
+                <div class="score-box">
+                    <div class="score-box-label">ĐIỂM TRUNG BÌNH</div>
+                    <div class="score-box-value" id="avgScore">0.0</div>
+                </div>
+                <div class="score-box">
+                    <div class="score-box-label">KHOẢNG CÁCH ĐẾN 10X</div>
+                    <div class="score-box-value" id="gapScore">0%</div>
+                </div>
+                <div class="score-box">
+                    <div class="score-box-label">ĐỊNH VỊ</div>
+                    <div class="score-box-value" id="levelLabel">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Section -->
+    <div class="card history-section">
+        <div class="card-title">Lịch sử đánh giá</div>
+        <div class="history-list" id="historyList"></div>
+    </div>
+
+    <!-- BOM Comparison Table -->
+    <div class="card">
+        <div class="card-title">Bảng tổng hợp so sánh BOM</div>
+        <div class="comparison-controls">
+            <button class="btn btn-primary" onclick="loadLatestForAll()">📊 Load điểm mới nhất của tất cả</button>
+            <button class="btn btn-secondary" onclick="exportComparisonCSV()">📥 Export CSV</button>
+        </div>
+        <div class="comparison-table-container">
+            <table class="comparison-table" id="comparisonTable">
+                <thead>
+                    <tr>
+                        <th class="sticky-col">Tiêu chí</th>
+                        <th>CEO</th>
+                        <th>Quyên</th>
+                        <th>Sơn</th>
+                        <th>Ethan</th>
+                        <th class="avg-col">TB Team</th>
+                    </tr>
+                </thead>
+                <tbody id="comparisonTableBody">
+                    <!-- Will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        <div class="comparison-summary" id="comparisonSummary"></div>
+    </div>
+</div>
+
+<script>
+// Data structure
+const members = ['CEO', 'Quyên', 'Sơn', 'Ethan'];
+
+const thinkingModels = [
+    { id: 'firstPrinciple', label: 'First Principle Thinking', desc: 'Tư duy nguyên lý gốc' },
+    { id: 'secondOrder', label: 'Second-Order Thinking', desc: 'Tư duy hậu quả dây chuyền' },
+    { id: 'systemThinking', label: 'System Thinking', desc: 'Tư duy hệ thống' },
+    { id: 'benchmark', label: 'Benchmark Thinking', desc: 'Tư duy so sánh chuẩn mực' }
+];
+
+const coreDNA = [
+    { id: 'integrity', label: 'Integrity', desc: 'Chính trực' },
+    { id: 'mindset', label: 'Mindset (Ownership)', desc: 'Năng lực làm chủ' },
+    { id: 'definitionDone', label: 'Definition of Done', desc: '120% hoàn thành' },
+    { id: 'problemSolving', label: 'Problem Solving', desc: 'Giải quyết từ gốc' },
+    { id: 'aiFirst', label: 'AI First', desc: 'Ưu tiên AI' },
+    { id: 'impact8020', label: 'Impact 80/20', desc: 'Sức mạnh đòn bẩy' }
+];
+
+// State
+let currentMember = 'CEO';
+let currentData = {};
+let assessmentHistory = {};
+let radarChart = null;
+
+// Initialize
+function init() {
+    loadFromStorage();
+    renderMemberSelect();
+    renderInputs();
+    initChart();
+    loadMemberData(currentMember);
+    renderHistory();
+}
+
+// Render member selection
+function renderMemberSelect() {
+    const container = document.getElementById('memberSelect');
+    members.forEach(member => {
+        const btn = document.createElement('button');
+        btn.className = `member-btn ${member === currentMember ? 'active' : ''}`;
+        btn.textContent = member;
+        btn.onclick = () => selectMember(member);
+        container.appendChild(btn);
+    });
+}
+
+// Select member
+function selectMember(member) {
+    currentMember = member;
+    document.querySelectorAll('.member-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === member);
+    });
+    loadMemberData(member);
+    renderHistory();
+}
+
+// Render inputs
+function renderInputs() {
+    renderInputGroup('thinkingInputs', thinkingModels);
+    renderInputGroup('dnaInputs', coreDNA);
+}
+
+function renderInputGroup(containerId, items) {
+    const container = document.getElementById(containerId);
+    items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'input-item';
+        div.innerHTML = `
+            <div class="input-label">
+                <div class="input-label-text">${item.label}</div>
+                <div class="input-label-value value-1" id="value-${item.id}">1</div>
+            </div>
+            <div class="slider-container">
+                <input type="range" min="1" max="3" value="1" step="1" 
+                       class="slider" id="${item.id}" 
+                       oninput="updateValue('${item.id}')">
+                <div class="slider-labels">
+                    <span>Problematic</span>
+                    <span>Solver</span>
+                    <span>Builder</span>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Update slider value
+function updateValue(id) {
+    const slider = document.getElementById(id);
+    const valueDisplay = document.getElementById(`value-${id}`);
+    const value = parseInt(slider.value);
+    
+    valueDisplay.textContent = value;
+    valueDisplay.className = `input-label-value value-${value}`;
+    
+    currentData[id] = value;
+    updateChart();
+}
+
+// Initialize Chart
+function initChart() {
+    const ctx = document.getElementById('radarChart').getContext('2d');
+    
+    const allLabels = [
+        ...thinkingModels.map(m => m.label),
+        ...coreDNA.map(d => d.label)
+    ];
+    
+    radarChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: allLabels,
+            datasets: [
+                {
+                    label: 'Tiêu chuẩn Builder 10x',
+                    data: new Array(10).fill(3),
+                    backgroundColor: 'rgba(88, 166, 255, 0.1)',
+                    borderColor: '#58a6ff',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#58a6ff',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
+                },
+                {
+                    label: 'Năng lực hiện tại',
+                    data: new Array(10).fill(1),
+                    backgroundColor: 'rgba(248, 81, 73, 0.2)',
+                    borderColor: '#f85149',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#f85149',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    min: 0,
+                    max: 3,
+                    ticks: {
+                        stepSize: 1,
+                        color: '#8b949e',
+                        backdropColor: 'transparent'
+                    },
+                    grid: {
+                        color: '#30363d'
+                    },
+                    pointLabels: {
+                        color: '#f0f6fc',
+                        font: {
+                            size: 12,
+                            weight: '600'
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
+// Update chart with current data
+function updateChart() {
+    const dataPoints = [
+        ...thinkingModels.map(m => currentData[m.id] || 1),
+        ...coreDNA.map(d => currentData[d.id] || 1)
+    ];
+    
+    radarChart.data.datasets[1].data = dataPoints;
+    radarChart.update();
+    
+    updateScoreSummary(dataPoints);
+}
+
+// Update score summary
+function updateScoreSummary(dataPoints) {
+    const avg = (dataPoints.reduce((a, b) => a + b, 0) / dataPoints.length).toFixed(1);
+    const gap = Math.round((avg / 3) * 100);
+    
+    document.getElementById('avgScore').textContent = avg + '/10';
+    document.getElementById('gapScore').textContent = gap + '%';
+    
+    let level = 'Problematic xuất sắc (Cày 2x)';
+    if (avg >= 2.5) level = 'Builder xuất sắc (Gần 10x)';
+    else if (avg >= 1.8) level = 'Solver xuất sắc (Bẫy 2x)';
+    
+    document.getElementById('levelLabel').textContent = level;
+}
+
+// Load member data
+function loadMemberData(member) {
+    const history = assessmentHistory[member] || [];
+    if (history.length > 0) {
+        const latest = history[history.length - 1];
+        currentData = { ...latest.data };
+        
+        // Update all sliders
+        [...thinkingModels, ...coreDNA].forEach(item => {
+            const slider = document.getElementById(item.id);
+            const value = currentData[item.id] || 1;
+            slider.value = value;
+            updateValue(item.id);
+        });
+    } else {
+        // Reset to default
+        currentData = {};
+        [...thinkingModels, ...coreDNA].forEach(item => {
+            const slider = document.getElementById(item.id);
+            slider.value = 1;
+            updateValue(item.id);
+        });
+    }
+    updateChart();
+}
+
+// Save assessment
+function saveAssessment() {
+    if (!assessmentHistory[currentMember]) {
+        assessmentHistory[currentMember] = [];
+    }
+    
+    const assessment = {
+        date: new Date().toISOString(),
+        data: { ...currentData },
+        avg: calculateAvg()
+    };
+    
+    assessmentHistory[currentMember].push(assessment);
+    saveToStorage();
+    renderHistory();
+    
+    alert(`✅ Đã lưu đánh giá cho ${currentMember}!`);
+}
+
+// Calculate average
+function calculateAvg() {
+    const values = Object.values(currentData);
+    if (values.length === 0) return 0;
+    return (values.reduce((a, b) => a + b, 0) / values.length).toFixed(1);
+}
+
+// Reset form
+function resetForm() {
+    if (confirm('Bạn có chắc muốn reset tất cả về 1?')) {
+        currentData = {};
+        [...thinkingModels, ...coreDNA].forEach(item => {
+            const slider = document.getElementById(item.id);
+            slider.value = 1;
+            updateValue(item.id);
+        });
+    }
+}
+
+// Render history
+function renderHistory() {
+    const container = document.getElementById('historyList');
+    const history = assessmentHistory[currentMember] || [];
+    
+    if (history.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: #8b949e; padding: 40px;">Chưa có lịch sử đánh giá</div>';
+        return;
+    }
+    
+    container.innerHTML = '';
+    history.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        const date = new Date(item.date);
+        div.innerHTML = `
+            <div>
+                <div class="history-date">${date.toLocaleDateString('vi-VN')} ${date.toLocaleTimeString('vi-VN')}</div>
+                <div class="history-score">Điểm TB: ${item.avg}/10</div>
+            </div>
+            <div class="history-actions">
+                <button class="btn btn-secondary" onclick="loadHistory(${index})">📊 Xem</button>
+                <button class="btn btn-danger" onclick="deleteHistory(${index})">🗑️</button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Load history item
+function loadHistory(index) {
+    const history = assessmentHistory[currentMember][index];
+    currentData = { ...history.data };
+    
+    [...thinkingModels, ...coreDNA].forEach(item => {
+        const slider = document.getElementById(item.id);
+        const value = currentData[item.id] || 1;
+        slider.value = value;
+        updateValue(item.id);
+    });
+    
+    updateChart();
+}
+
+// Delete history item
+function deleteHistory(index) {
+    if (confirm('Bạn có chắc muốn xóa đánh giá này?')) {
+        assessmentHistory[currentMember].splice(index, 1);
+        saveToStorage();
+        renderHistory();
+    }
+}
+
+// Storage functions
+function saveToStorage() {
+    localStorage.setItem('pati_bom_assessments', JSON.stringify(assessmentHistory));
+}
+
+function loadFromStorage() {
+    const stored = localStorage.getItem('pati_bom_assessments');
+    if (stored) {
+        assessmentHistory = JSON.parse(stored);
+    }
+}
+
+// Initialize on load
+window.onload = init;
+
+// Comparison Table Functions
+function loadLatestForAll() {
+    const allCriteria = [...thinkingModels, ...coreDNA];
+    const tableBody = document.getElementById('comparisonTableBody');
+    const summaryDiv = document.getElementById('comparisonSummary');
+    
+    tableBody.innerHTML = '';
+    
+    // Check if any member has data
+    let hasData = false;
+    members.forEach(member => {
+        if (assessmentHistory[member] && assessmentHistory[member].length > 0) {
+            hasData = true;
+        }
+    });
+    
+    if (!hasData) {
+        tableBody.innerHTML = '<tr><td colspan="6" class="no-data-message">Chưa có dữ liệu đánh giá. Hãy lưu đánh giá cho ít nhất 1 thành viên.</td></tr>';
+        summaryDiv.innerHTML = '';
+        return;
+    }
+    
+    // Add Thinking Models section
+    const thinkingHeader = document.createElement('tr');
+    thinkingHeader.className = 'category-row';
+    thinkingHeader.innerHTML = '<td colspan="6">4 THINKING MODELS</td>';
+    tableBody.appendChild(thinkingHeader);
+    
+    thinkingModels.forEach(model => {
+        addComparisonRow(tableBody, model);
+    });
+    
+    // Add DNA section
+    const dnaHeader = document.createElement('tr');
+    dnaHeader.className = 'category-row';
+    dnaHeader.innerHTML = '<td colspan="6">6 CORE DNA</td>';
+    tableBody.appendChild(dnaHeader);
+    
+    coreDNA.forEach(dna => {
+        addComparisonRow(tableBody, dna);
+    });
+    
+    // Add average row
+    addAverageRow(tableBody);
+    
+    // Generate summary
+    generateComparisonSummary(summaryDiv);
+}
+
+function addComparisonRow(tableBody, criterion) {
+    const row = document.createElement('tr');
+    const nameCell = `<td class="sticky-col">${criterion.label}</td>`;
+    
+    let memberCells = '';
+    let teamTotal = 0;
+    let teamCount = 0;
+    
+    members.forEach(member => {
+        const history = assessmentHistory[member] || [];
+        let score = 0;
+        
+        if (history.length > 0) {
+            const latest = history[history.length - 1];
+            score = latest.data[criterion.id] || 0;
+        }
+        
+        if (score > 0) {
+            teamTotal += score;
+            teamCount++;
+        }
+        
+        const scoreClass = score > 0 ? `score-${score}` : 'score-0';
+        const displayScore = score > 0 ? score : '-';
+        memberCells += `<td class="score-cell ${scoreClass}">${displayScore}</td>`;
+    });
+    
+    const teamAvg = teamCount > 0 ? (teamTotal / teamCount).toFixed(1) : '-';
+    const avgClass = teamAvg !== '-' ? `score-${Math.round(parseFloat(teamAvg))}` : 'score-0';
+    memberCells += `<td class="avg-cell ${avgClass}">${teamAvg}</td>`;
+    
+    row.innerHTML = nameCell + memberCells;
+    tableBody.appendChild(row);
+}
+
+function addAverageRow(tableBody) {
+    const row = document.createElement('tr');
+    row.style.fontWeight = '700';
+    row.style.background = '#30363d';
+    
+    let html = '<td class="sticky-col">ĐIỂM TRUNG BÌNH</td>';
+    
+    let grandTotal = 0;
+    let grandCount = 0;
+    
+    members.forEach(member => {
+        const history = assessmentHistory[member] || [];
+        if (history.length > 0) {
+            const latest = history[history.length - 1];
+            const avg = latest.avg;
+            html += `<td class="score-cell score-${Math.round(parseFloat(avg))}">${avg}</td>`;
+            grandTotal += parseFloat(avg);
+            grandCount++;
+        } else {
+            html += '<td class="score-0">-</td>';
+        }
+    });
+    
+    const teamOverallAvg = grandCount > 0 ? (grandTotal / grandCount).toFixed(1) : '-';
+    html += `<td class="avg-cell score-${Math.round(parseFloat(teamOverallAvg))}">${teamOverallAvg}</td>`;
+    
+    row.innerHTML = html;
+    tableBody.appendChild(row);
+}
+
+function generateComparisonSummary(summaryDiv) {
+    summaryDiv.innerHTML = '';
+    
+    // Find strongest member
+    let strongest = { name: '', score: 0 };
+    let weakest = { name: '', score: 10 };
+    let teamTotal = 0;
+    let teamCount = 0;
+    
+    members.forEach(member => {
+        const history = assessmentHistory[member] || [];
+        if (history.length > 0) {
+            const latest = history[history.length - 1];
+            const avg = parseFloat(latest.avg);
+            
+            if (avg > strongest.score) {
+                strongest = { name: member, score: avg };
+            }
+            if (avg < weakest.score) {
+                weakest = { name: member, score: avg };
+            }
+            
+            teamTotal += avg;
+            teamCount++;
+        }
+    });
+    
+    if (teamCount === 0) return;
+    
+    const teamAvg = (teamTotal / teamCount).toFixed(1);
+    
+    // Strongest card
+    const strongestCard = document.createElement('div');
+    strongestCard.className = 'summary-card strongest';
+    strongestCard.innerHTML = `
+        <h4>🏆 XUẤT SẮC NHẤT</h4>
+        <div class="value" style="color: #3fb950;">${strongest.name}</div>
+        <div class="detail">Điểm TB: ${strongest.score}/10</div>
+    `;
+    summaryDiv.appendChild(strongestCard);
+    
+    // Team average card
+    const teamCard = document.createElement('div');
+    teamCard.className = 'summary-card team-avg';
+    teamCard.innerHTML = `
+        <h4>📊 TRUNG BÌNH TEAM</h4>
+        <div class="value" style="color: #58a6ff;">${teamAvg}/10</div>
+        <div class="detail">Khoảng cách đến 10x: ${Math.round((parseFloat(teamAvg) / 3) * 100)}%</div>
+    `;
+    summaryDiv.appendChild(teamCard);
+    
+    // Weakest card
+    const weakestCard = document.createElement('div');
+    weakestCard.className = 'summary-card weakest';
+    weakestCard.innerHTML = `
+        <h4>🎯 CẦN PHÁT TRIỂN</h4>
+        <div class="value" style="color: #f85149;">${weakest.name}</div>
+        <div class="detail">Điểm TB: ${weakest.score}/10</div>
+    `;
+    summaryDiv.appendChild(weakestCard);
+    
+    // Gap analysis card
+    const gap = (strongest.score - weakest.score).toFixed(1);
+    const gapCard = document.createElement('div');
+    gapCard.className = 'summary-card';
+    gapCard.style.borderColor = '#d29922';
+    gapCard.innerHTML = `
+        <h4>📏 KHOẢNG CÁCH TEAM</h4>
+        <div class="value" style="color: #d29922;">${gap} điểm</div>
+        <div class="detail">Giữa người cao nhất và thấp nhất</div>
+    `;
+    summaryDiv.appendChild(gapCard);
+}
+
+function exportComparisonCSV() {
+    const allCriteria = [...thinkingModels, ...coreDNA];
+    let csv = 'Tiêu chí,CEO,Quyên,Sơn,Ethan,TB Team\n';
+    
+    csv += 'THINKING MODELS\n';
+    thinkingModels.forEach(model => {
+        csv += buildCSVRow(model);
+    });
+    
+    csv += '\nCORE DNA\n';
+    coreDNA.forEach(dna => {
+        csv += buildCSVRow(dna);
+    });
+    
+    csv += '\nĐIỂM TRUNG BÌNH,';
+    members.forEach(member => {
+        const history = assessmentHistory[member] || [];
+        if (history.length > 0) {
+            const latest = history[history.length - 1];
+            csv += `${latest.avg},`;
+        } else {
+            csv += '-,';
+        }
+    });
+    
+    // Download
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `PATI_BOM_Comparison_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+}
+
+function buildCSVRow(criterion) {
+    let row = `${criterion.label},`;
+    let teamTotal = 0;
+    let teamCount = 0;
+    
+    members.forEach(member => {
+        const history = assessmentHistory[member] || [];
+        let score = 0;
+        
+        if (history.length > 0) {
+            const latest = history[history.length - 1];
+            score = latest.data[criterion.id] || 0;
+        }
+        
+        if (score > 0) {
+            teamTotal += score;
+            teamCount++;
+        }
+        
+        row += `${score > 0 ? score : '-'},`;
+    });
+    
+    const teamAvg = teamCount > 0 ? (teamTotal / teamCount).toFixed(1) : '-';
+    row += `${teamAvg}\n`;
+    
+    return row;
+}
+</script>
+
+</body>
+</html>
